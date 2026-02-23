@@ -1,6 +1,7 @@
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.List;
 
 public class DataRetriever {
 
@@ -18,6 +19,10 @@ public class DataRetriever {
             throw new RuntimeException("Error counting votes: " + e.getMessage());
         }
         return 0;
+    }
+
+    List<VoterTypeCount> countVotesByType(){
+        DBConnection dbConnection = new DBConnection();
     }
 
 }
