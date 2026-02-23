@@ -67,4 +67,8 @@ public class DataRetriever {
         return candidateVoteCounts;
     }
 
+    VoteSummary computeVoteSummary(){
+
+    }
+
 }
