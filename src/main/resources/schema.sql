@@ -1,0 +1,15 @@
+CREATE USER ceni_project_db_admin WITH PASSWORD '123456';
+
+GRANT ALL PRIVILEGES ON DATABASE ceni_project_db TO ceni_project_db_admin;
+
+\c ceni_project_db
+
+GRANT ALL ON SCHEMA public TO ceni_project_db_admin;
+
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO ceni_project_db_admin;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO ceni_project_db_admin;
+GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA public TO ceni_project_db_admin;
+
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL PRIVILEGES ON TABLES TO ceni_project_db_admin;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL PRIVILEGES ON SEQUENCES TO ceni_project_db_admin;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL PRIVILEGES ON FUNCTIONS TO ceni_project_db_admin;
