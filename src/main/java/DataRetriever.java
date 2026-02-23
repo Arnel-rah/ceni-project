@@ -67,8 +67,53 @@ public class DataRetriever {
         return candidateVoteCounts;
     }
 
-    VoteSummary computeVoteSummary(){
+    VoteSummary computeVoteSummary() {
+        DBConnection db = new DBConnection();
+        try (Connection con = db.getConnection()) {
+            String sql = """
+                SELECT 
+                    COUNT(CASE WHEN vote_type = 'VALID' THEN 1 END) AS valid_count,
+                    COUNT(CASE WHEN vote_type = 'BLANK' THEN 1 END) AS blank_count,
+                    COUNT(CASE WHEN vote_type = 'NULL' THEN 1 END) AS null_count
+                FROM vote
+                """;
+            try (PreparedStatement ps = con.prepareStatement(sql)) {
+                ResultSet rs = ps.executeQuery();
+                if (rs.next()) {
+                    return new VoteSummary(
+                            rs.getInt("valid_count"),
+                            rs.getInt("blank_count"),
+                            rs.getInt("null_count")
+                    );
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error Connection: " + e.getMessage());
+        }
+        return null;
+    }
 
+    double computeTurnoutRate() {
+        DBConnection db = new DBConnection();
+        try (Connection con = db.getConnection()) {
+            String sql = """
+                SELECT 
+                    COUNT(DISTINCT voter_id) AS voted,
+                    (SELECT COUNT(id) FROM voter) AS total
+                FROM vote
+                """;
+            try (PreparedStatement ps = con.prepareStatement(sql)) {
+                ResultSet rs = ps.executeQuery();
+                if (rs.next()) {
+                    double voted = rs.getInt("voted");
+                    double total = rs.getInt("total");
+                    return (voted / total) * 100;
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error Connection: " + e.getMessage());
+        }
+        return 0;
     }
 
 }
