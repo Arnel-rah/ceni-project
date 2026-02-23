@@ -1,6 +1,8 @@
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
 public class DataRetriever {
@@ -21,8 +23,24 @@ public class DataRetriever {
         return 0;
     }
 
-    List<VoterTypeCount> countVotesByType(){
-        DBConnection dbConnection = new DBConnection();
+    List<VoterTypeCount> countVotesByType() {
+        List<VoterTypeCount> voterTypeCounts = new ArrayList<>();
+        DBConnection db = new DBConnection();
+        try (Connection con = db.getConnection()) {
+            String sql = "SELECT vote_type, COUNT(id) AS total_votes FROM vote GROUP BY vote_type";
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+
+            while (rs.next()) {
+                VoteType voteType = VoteType.valueOf(rs.getString("vote_type"));
+                int totalVotes = rs.getInt("total_votes");
+                VoterTypeCount voterTypeCount = new VoterTypeCount(voteType, totalVotes);
+                voterTypeCounts.add(voterTypeCount);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error Connection: " + e.getMessage());
+        }
+        return voterTypeCounts;
     }
 
 }
