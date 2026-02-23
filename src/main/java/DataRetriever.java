@@ -43,4 +43,28 @@ public class DataRetriever {
         return voterTypeCounts;
     }
 
+    List<CandidateVoteCount> countValidVotesByCandidate() {
+        List<CandidateVoteCount> candidateVoteCounts = new ArrayList<>();
+        DBConnection db = new DBConnection();
+        try (Connection con = db.getConnection()) {
+            String sql = """
+                SELECT c.name, COUNT(v.id) AS valid_votes
+                FROM candidate c
+                LEFT JOIN vote v ON c.id = v.candidate_id AND v.vote_type = 'VALID'
+                GROUP BY c.name
+                """;
+            try (PreparedStatement ps = con.prepareStatement(sql)) {
+                ResultSet rs = ps.executeQuery();
+                while (rs.next()) {
+                    String candidateName = rs.getString("name");
+                    int validVotes = rs.getInt("valid_votes");
+                    candidateVoteCounts.add(new CandidateVoteCount(candidateName, validVotes));
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error Connection: " + e.getMessage());
+        }
+        return candidateVoteCounts;
+    }
+
 }
