@@ -18,10 +18,7 @@ public class VoterTypeCount {
 
     @Override
     public String toString() {
-        return "VoterTypeCount{" +
-                "voteType=" + voteType +
-                ", count=" + count +
-                '}';
+        return "VoteTypeCount(voteType=" + voteType + ", count=" + count + ")";
     }
 
     public VoterTypeCount(VoteType voteType, int count) {
